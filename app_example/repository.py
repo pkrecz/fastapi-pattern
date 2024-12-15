@@ -1,5 +1,6 @@
 from typing import Type, TypeVar
 from sqlmodel import SQLModel
+from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 from fastapi_filter.contrib.sqlalchemy import Filter
 
@@ -14,14 +15,14 @@ class CrudOperationRepository:
         self.model = model
 
     def get_by_id(self, id: int) -> Type[Model]:
-        return self.db.query(self.model).filter_by(id=id).first()
+        return self.db.get(self.model, id)
 
     def get_all(self, filter: Filter = None) -> Type[Model]:
-        query = self.db.query(self.model)
+        query = select(self.model)
         if filter is not None:
             query = filter.filter(query)
             query = filter.sort(query)
-        return query.all()
+        return self.db.execute(query).scalars().all()
 
     def create(self, record: Type[Model]) -> Type[Model]:
         self.db.add(record)

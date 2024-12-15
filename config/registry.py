@@ -1,11 +1,7 @@
 import logging
-from config.database import get_engine
+from config.database import Base, get_engine
 from config.middleware import CustomMiddleware
 from fastapi.middleware.cors import CORSMiddleware
-
-
-# app_example imports ...
-from app_example import models as example_models
 from app_example import controlers as example_controlers
 
 
@@ -13,7 +9,7 @@ logger = logging.getLogger("uvicorn.error")
 
 
 def create_tables():
-    example_models.Base.metadata.create_all(bind=get_engine())
+    Base.metadata.create_all(bind=get_engine())
     logger.info("Tables has been created.")
 
 

@@ -1,17 +1,17 @@
 import os
 
 
-def test_middleware(client_test):
-    response = client_test.get(url="/middleware/")
+def test_middleware(client):
+    response = client.get(url="/middleware/")
     assert response.status_code == 200
     assert response.json() == {"message": "Middleware is working"}
     assert response.headers["x-method"] == "It was request GET method."
 
 
 def test_create_author(
-                        client_test,
+                        client,
                         data_test_create_author):
-    response = client_test.post(
+    response = client.post(
                                 url=f"/author/",
                                 json=data_test_create_author)
     response_json = response.json()
@@ -23,11 +23,11 @@ def test_create_author(
 
 
 def test_update_author(
-                        client_test,
+                        client,
                         data_test_create_author,
                         data_test_update_author):
     id = os.environ["ID"]
-    response = client_test.put(
+    response = client.put(
                                 url=f"/author/{id}/",
                                 json=data_test_update_author)
     response_json = response.json()
@@ -38,25 +38,25 @@ def test_update_author(
 
 
 def test_retrive_author(
-                        client_test):
+                        client):
     id = os.environ["ID"]
-    response = client_test.get(
+    response = client.get(
                                 url=f"/author/{id}/")
     response_json = response.json()
-    assert response_json["id"] == int(id) 
+    assert response_json["id"] == int(id)
     assert response.status_code == 200
 
 
 def test_list_author(
-                        client_test):
-    response = client_test.get(
+                        client):
+    response = client.get(
                                 url=f"/author/")
     assert response.status_code == 200
 
 
 def test_delete_author(
-                        client_test):
+                        client):
     id = os.environ["ID"]
-    response = client_test.delete(
+    response = client.delete(
                                 url=f"/author/{id}/")
     assert response.status_code == 204
