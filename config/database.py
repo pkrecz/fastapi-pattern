@@ -1,14 +1,16 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.exc import DatabaseError, SQLAlchemyError
-from sqlalchemy.ext.declarative import declarative_base
 from functools import cache
 from dotenv import load_dotenv
 
-load_dotenv()
-Base = declarative_base()
 
+class Base(DeclarativeBase):
+    pass
+
+
+load_dotenv()
 url = os.getenv("DATABASE_URL")
 
 
