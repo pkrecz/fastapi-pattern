@@ -1,4 +1,4 @@
-from typing import Type, TypeVar
+from typing import TypeVar
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from fastapi_filter.contrib.sqlalchemy import Filter
@@ -18,12 +18,12 @@ class AuthorService:
         self.crud = CrudOperationRepository(self.db, self.model)
 
 
-    def author_create(self, data: Type[BaseModel]) -> Type[Model]:
+    def author_create(self, data: BaseModel) -> Model:
         instance = self.model(**data.model_dump())
         return self.crud.create(instance)
 
 
-    def author_update(self, id: int, data: Type[BaseModel]) -> Type[Model]:
+    def author_update(self, id: int, data: BaseModel) -> Model:
         instance = self.crud.get_by_id(id)
         return self.crud.update(instance, data)
 
@@ -33,11 +33,11 @@ class AuthorService:
         return self.crud.delete(instance)
 
 
-    def author_retrieve(self, id: int) -> Type[Model]:
+    def author_retrieve(self, id: int) -> Model:
         instance = self.crud.get_by_id(id)
         return self.crud.retrieve(instance)
 
 
-    def author_list(self, filter: Type[Filter] = None) -> Type[Model]:
+    def author_list(self, filter: Filter = None) -> Model:
         instance = self.crud.get_all(filter)
         return self.crud.list(instance)
