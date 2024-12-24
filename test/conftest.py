@@ -1,22 +1,36 @@
+import os
 import pytest
 import logging
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from config.database import get_engine, get_db
+from config.database import Base, get_db
 from main import app
+
+
+engine = create_engine(os.getenv("DATABASE_URL_TEST"))
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_database():
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    logging.info("Configuration -----> Tables for testing has been created.")
+    yield
+    Base.metadata.drop_all(bind=engine)
+    logging.info("Configuration -----> Tables for testing has been removed.")
 
 
 @pytest.fixture(scope="session")
 def db():
-    _session = sessionmaker(
-                                    autocommit=False,
-                                    autoflush=False)
-    logging.info("Configuration -----> Session created.")
-    connection = get_engine().connect()
+    connection = engine.connect()
     logging.info("Configuration -----> Connection established.")
     transaction = connection.begin()
     logging.info("Configuration -----> Transaction started.")
-    session = _session(bind=connection)
+    session = sessionmaker(
+                            autocommit=False,
+                            autoflush=False,
+                            bind=connection)()
     logging.info("Configuration -----> Session ready for running.")
     yield session
     session.close()
